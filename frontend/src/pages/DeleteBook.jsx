@@ -1,23 +1,27 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import BackButton from "../components/BackButton";
 import Spinner from "../components/Spinner";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import { useSnackbar } from "notistack";
 
 const DeleteBook = () => {
-  const [loading, setLoading ] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
+  const { enqueueSnackbar } = useSnackbar();
   const handleDeleteBook = () => {
     setLoading(true);
     axios
       .delete(`http://localhost:5555/books/${id}`)
       .then(() => {
         setLoading(false);
+        enqueueSnackbar("Book deleted successfully", { variant: "success" });
         navigate("/");
-      }).catch((error) => {
+      })
+      .catch((error) => {
         setLoading(false);
-        alert("An error has occurred.  Please check the console.");
+        enqueueSnackbar("Error", { variant: "error" });
         console.log(error);
       });
   };
@@ -32,10 +36,13 @@ const DeleteBook = () => {
         <button
           className="p-4 bg-red-600 text-white m-8 w-full"
           onClick={handleDeleteBook}
-          >
-            Yes, delete it.
-          </button>
-          <button className="p-4 bg-sky-600 text-white m-8 w-full" onClick={()=>navigate("/")}>
+        >
+          Yes, delete it.
+        </button>
+        <button
+          className="p-4 bg-sky-600 text-white m-8 w-full"
+          onClick={() => navigate("/")}
+        >
           No, go back.
         </button>
       </div>
